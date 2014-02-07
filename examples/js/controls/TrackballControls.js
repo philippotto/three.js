@@ -3,17 +3,19 @@
  * @author Mark Lundin 	/ http://mark-lundin.com
  */
 
-THREE.TrackballControls = function ( object, domElement ) {
+THREE.TrackballControls = function ( object, domElement, target, updateCallback ) {
 
 	var _this = this;
-	var STATE = { NONE: -1, ROTATE: 0, ZOOM: 1, PAN: 2, TOUCH_ROTATE: 3, TOUCH_ZOOM: 4, TOUCH_PAN: 5 };
+	var STATE = { NONE: -1, PAN: 0, ZOOM: 1, ROTATE: 2, TOUCH_ROTATE: 3, TOUCH_ZOOM: 4, TOUCH_PAN: 5 };
 
 	this.object = object;
 	this.domElement = ( domElement !== undefined ) ? domElement : document;
+	this.updateCallback = updateCallback;
 
 	// API
 
 	this.enabled = true;
+	this.keyboardEnabled = false;
 
 	this.screen = { left: 0, top: 0, width: 0, height: 0 };
 
@@ -36,7 +38,8 @@ THREE.TrackballControls = function ( object, domElement ) {
 
 	// internals
 
-	this.target = new THREE.Vector3();
+	this.target = target || new THREE.Vector3();
+	this.lastTarget = this.target.clone();
 
 	var lastPosition = new THREE.Vector3();
 
@@ -289,7 +292,7 @@ THREE.TrackballControls = function ( object, domElement ) {
 
 	this.update = function () {
 
-		_eye.subVectors( _this.object.position, _this.target );
+		_eye.subVectors( _this.object.position, _this.lastTarget );
 
 		if ( !_this.noRotate ) {
 
@@ -323,6 +326,9 @@ THREE.TrackballControls = function ( object, domElement ) {
 
 		}
 
+		_this.lastTarget = _this.target.clone();
+		_this.updateCallback();
+
 	};
 
 	this.reset = function () {
@@ -348,7 +354,7 @@ THREE.TrackballControls = function ( object, domElement ) {
 
 	function keydown( event ) {
 
-		if ( _this.enabled === false ) return;
+		if ( _this.enabled === false || _this.keyboardEnabled === false ) return;
 
 		window.removeEventListener( 'keydown', keydown );
 
@@ -376,7 +382,7 @@ THREE.TrackballControls = function ( object, domElement ) {
 
 	function keyup( event ) {
 
-		if ( _this.enabled === false ) return;
+		if ( _this.enabled === false || _this.keyboardEnabled === false ) return;
 
 		_state = _prevState;
 
@@ -414,8 +420,8 @@ THREE.TrackballControls = function ( object, domElement ) {
 
 		}
 
-		document.addEventListener( 'mousemove', mousemove, false );
-		document.addEventListener( 'mouseup', mouseup, false );
+		window.addEventListener( 'mousemove', mousemove, false );
+		window.addEventListener( 'mouseup', mouseup, false );
 		_this.dispatchEvent( startEvent );
 
 
@@ -431,14 +437,17 @@ THREE.TrackballControls = function ( object, domElement ) {
 		if ( _state === STATE.ROTATE && !_this.noRotate ) {
 
 			_this.getMouseProjectionOnBall( event.pageX, event.pageY, _rotateEnd );
+			_this.update();
 
 		} else if ( _state === STATE.ZOOM && !_this.noZoom ) {
 
 			_this.getMouseOnScreen( event.pageX, event.pageY, _zoomEnd );
+			_this.update();
 
 		} else if ( _state === STATE.PAN && !_this.noPan ) {
 
 			_this.getMouseOnScreen( event.pageX, event.pageY, _panEnd );
+			_this.update();
 
 		}
 
@@ -586,6 +595,7 @@ THREE.TrackballControls = function ( object, domElement ) {
 	window.addEventListener( 'keyup', keyup, false );
 
 	this.handleResize();
+	this.update();
 
 };
 
