@@ -6880,6 +6880,48 @@ THREE.EventDispatcher.prototype = {
 
 			} );
 
+		} else if ( object instanceof THREE.ParticleSystem ) {
+
+			// ATTENTION! This entire section (else if block) has been
+			// added by Georg
+
+			var geometry = object.geometry;
+			if ( geometry instanceof THREE.BufferGeometry ) {
+
+				var positionArray = geometry.attributes.position.array;
+				var numVertices   = geometry.attributes.position.numItems;
+				var tempVector    = new THREE.Vector3(0, 0, 0)
+
+				for (var i = 0; i < numVertices; i++) {
+
+					var pos = [positionArray[3 * i], positionArray[3 * i + 1],
+						positionArray[3 * i + 2]];
+					if(raycaster.ray.__scalingFactors !== undefined){
+						// Apply scaling of entire group
+						// (voxel --> nm)
+						pos[0] *= raycaster.ray.__scalingFactors[0];
+						pos[1] *= raycaster.ray.__scalingFactors[1];
+						pos[2] *= raycaster.ray.__scalingFactors[2];
+					}
+
+					tempVector.set( pos[0], pos[1], pos[2] );
+
+					var distance = raycaster.ray.distanceToPoint( tempVector );
+
+					if(distance < raycaster.ray.threshold){
+						intersects.push( {
+
+							distance: distance,
+							point: tempVector,
+							face: null,
+							object: object,
+							index: i
+
+						} );
+					}
+				}
+			}
+
 		} else if ( object instanceof THREE.LOD ) {
 
 			matrixPosition.setFromMatrixPosition( object.matrixWorld );
