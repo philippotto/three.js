@@ -21,6 +21,15 @@
 		"src",
 		"test",
 		"utils",
-		"LICENSE"
+		"LICENSE",
+
+		"examples/**/*.html",
+		"examples/files",
+		"examples/fonts",
+		"examples/models",
+		"examples/obj",
+		"examples/scenes",
+		"examples/sounds",
+		"examples/texturs"
 	]
 }
