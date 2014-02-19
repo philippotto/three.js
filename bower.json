@@ -23,13 +23,6 @@
 		"utils",
 		"LICENSE",
 
-		"examples/**/*.html",
-		"examples/files",
-		"examples/fonts",
-		"examples/models",
-		"examples/obj",
-		"examples/scenes",
-		"examples/sounds",
-		"examples/textures"
+		"examples"
 	]
 }
