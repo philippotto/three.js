@@ -140,7 +140,7 @@ THREE.TrackballControls = function ( object, domElement, target, updateCallback 
 				} else {
 
 					mouseOnBall.z = .5 / length;
-					
+
 				}
 
 			} else if ( length > 1.0 ) {
@@ -405,16 +405,19 @@ THREE.TrackballControls = function ( object, domElement, target, updateCallback 
 
 		if ( _state === STATE.ROTATE && !_this.noRotate ) {
 
+      console.log( "Rotate", event.pageX, event.pageY );
 			_this.getMouseProjectionOnBall( event.pageX, event.pageY, _rotateStart );
 			_rotateEnd.copy(_rotateStart)
 
 		} else if ( _state === STATE.ZOOM && !_this.noZoom ) {
 
+      console.log( "Zoom", event.pageX, event.pageY );
 			_this.getMouseOnScreen( event.pageX, event.pageY, _zoomStart );
 			_zoomEnd.copy(_zoomStart);
 
 		} else if ( _state === STATE.PAN && !_this.noPan ) {
 
+      console.log( "Pan", event.pageX, event.pageY );
 			_this.getMouseOnScreen( event.pageX, event.pageY, _panStart );
 			_panEnd.copy(_panStart)
 
