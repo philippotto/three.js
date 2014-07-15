@@ -405,7 +405,7 @@ THREE.TrackballControls = function ( object, domElement, target, updateCallback 
 
 		if ( _state === STATE.ROTATE && !_this.noRotate ) {
 
-			_this.getMouseProjectionOnBall( event.pageX, event.pageY, _rotateStart );
+			_this.getMouseProjectionOnBall( event.clientX, event.clientY, _rotateStart );
 			_rotateEnd.copy(_rotateStart)
 
 		} else if ( _state === STATE.ZOOM && !_this.noZoom ) {
@@ -436,7 +436,7 @@ THREE.TrackballControls = function ( object, domElement, target, updateCallback 
 
 		if ( _state === STATE.ROTATE && !_this.noRotate ) {
 
-			_this.getMouseProjectionOnBall( event.pageX, event.pageY, _rotateEnd );
+			_this.getMouseProjectionOnBall( event.clientX, event.clientY, _rotateEnd );
 			_this.update();
 
 		} else if ( _state === STATE.ZOOM && !_this.noZoom ) {
@@ -593,6 +593,10 @@ THREE.TrackballControls = function ( object, domElement, target, updateCallback 
 
 	window.addEventListener( 'keydown', keydown, false );
 	window.addEventListener( 'keyup', keyup, false );
+
+  $(this.domElement).bind('resizeCanvas', function(e) {
+     _this.handleResize();
+  });
 
 	this.handleResize();
 	this.update();
